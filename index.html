@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,27 +8,28 @@
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f0f2f5;
-    }
-    
-    .container {
-      height: 100vh;
-      width: 100%;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #eef2f3;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 20px;
+      height: 100vh;
     }
-
+    
     .card {
       background: white;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      padding: 40px;
+      border-radius: 25px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
       text-align: center;
-      width: 300px;
+      width: 320px;
+      transition: all 0.3s ease;
+    }
+
+    h1 {
+      color: #333;
+      font-size: 3rem;
+      margin: 10px 0;
     }
     
     .hidden {
@@ -37,93 +38,91 @@
     
     input {
       text-align: center;
-      padding: 10px;
-      font-size: 1.2rem;
-      border-radius: 10px;
+      padding: 12px;
+      font-size: 1.5rem;
+      border-radius: 12px;
       border: 2px solid #ddd;
-      width: 80%;
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 20px;
       outline: none;
-      transition: border-color 0.3s;
     }
 
     input:focus {
-      border-color: crimson;
+      border-color: #ff4757;
     }
     
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
     button {
       border: none;
-      background-color: crimson;
-      border-radius: 10px;
+      border-radius: 12px;
       color: white;
       cursor: pointer;
-      padding: 12px 25px;
+      padding: 12px 20px;
       font-size: 1rem;
       font-weight: bold;
-      transition: all 0.2s;
+      transition: opacity 0.2s, transform 0.1s;
+      flex: 1;
     }
 
-    button:hover {
-      background-color: #a0102b;
-      transform: translateY(-2px);
-    }
+    .btn-primary { background-color: #2ed573; } /* Hijau */
+    .btn-danger { background-color: #ff4757; }  /* Merah */
+    .btn-warning { background-color: #ffa502; } /* Oranye */
 
-    button:active {
-      transform: translateY(0);
-    }
+    button:hover { opacity: 0.9; }
+    button:active { transform: scale(0.95); }
 
     #pesan {
-      font-weight: bold;
-      height: 20px; /* Jaga layout agar tidak goyang saat pesan muncul */
-    }
-
-    #soal {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
+      margin-top: 20px;
+      font-weight: 600;
+      min-height: 24px;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="card">
-      <h1 id="soal">Siap?</h1>
-      <p id="instruksi">Klik tombol di bawah untuk mulai</p>
-      
-      <div id="game-area" class="hidden">
-        <input type="number" id="inputJawaban" placeholder="?" autocomplete="off"/>
-        <div style="margin-top: 20px;">
-          <button type="button" onclick="cekJawaban()" id="submit">Kirim Jawaban</button>
-        </div>
+  <div class="card">
+    <p id="instruksi">Berapa hasil dari:</p>
+    <h1 id="soal">?</h1>
+    
+    <div id="game-area" class="hidden">
+      <input type="number" id="inputJawaban" placeholder="Jawaban..."/>
+      <div class="btn-group">
+        <button type="button" class="btn-danger" onclick="menyerah()">Menyerah</button>
+        <button type="button" class="btn-primary" onclick="cekJawaban()">Cek</button>
       </div>
-
-      <button type="button" id="start" onclick="mulaiGame()">Mulai Game</button>
-      
-      <p id="pesan"></p>
     </div>
+
+    <button type="button" id="start" class="btn-primary" onclick="mulaiGame()">Mulai Main</button>
+    
+    <p id="pesan"></p>
   </div>
 
   <script type="text/javascript">
     let angka1, angka2, hasilBenar;
     
     const soalEl = document.getElementById('soal');
-    const instruksiEl = document.getElementById('instruksi');
     const inputEl = document.getElementById('inputJawaban');
     const pesanEl = document.getElementById('pesan');
     const startBtn = document.getElementById('start');
     const gameArea = document.getElementById('game-area');
 
     function mulaiGame() {
-      // Atur UI
+      // Setup Tampilan
       startBtn.classList.add("hidden");
       gameArea.classList.remove("hidden");
-      instruksiEl.innerHTML = "Berapa hasil penjumlahan ini?";
       pesanEl.innerHTML = "";
       inputEl.value = "";
-      inputEl.focus(); // Otomatis arahkan kursor ke input
+      inputEl.focus();
 
-      // Logika Angka
-      angka1 = Math.floor(Math.random() * 10) + 1;
-      angka2 = Math.floor(Math.random() * 10) + 1;
+      // Logika Angka (Random 1-20 agar sedikit menantang)
+      angka1 = Math.floor(Math.random() * 20) + 1;
+      angka2 = Math.floor(Math.random() * 20) + 1;
       hasilBenar = angka1 + angka2;
 
       soalEl.innerHTML = `${angka1} + ${angka2}`;
@@ -132,34 +131,39 @@
     function cekJawaban() {
       const jawabanUser = inputEl.value;
 
-      // Validasi jika kosong
       if (jawabanUser === "") {
-        pesanEl.innerHTML = "⚠️ Isi dulu ya!";
-        pesanEl.style.color = "orange";
+        pesanEl.innerHTML = "Isi dulu jawabannya!";
+        pesanEl.style.color = "#ffa502";
         return;
       }
 
       if (Number(jawabanUser) === hasilBenar) {
-        pesanEl.innerHTML = "✅ Benar! Kamu pintar.";
-        pesanEl.style.color = "green";
-        
-        // Ubah tombol untuk main lagi
-        startBtn.innerHTML = "Main Lagi";
-        startBtn.classList.remove("hidden");
-        gameArea.classList.add("hidden");
+        pesanEl.innerHTML = "🎉 Mantap! Jawabanmu Benar.";
+        pesanEl.style.color = "#2ed573";
+        akhiriSesi("Main Lagi");
       } else {
-        pesanEl.innerHTML = "❌ Salah, coba hitung lagi!";
-        pesanEl.style.color = "red";
+        pesanEl.innerHTML = "❌ Salah, coba hitung lagi ya.";
+        pesanEl.style.color = "#ff4757";
         inputEl.value = "";
         inputEl.focus();
       }
     }
 
-    // Fitur tambahan: Tekan Enter untuk Submit
-    inputEl.addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') {
-        cekJawaban();
-      }
+    function menyerah() {
+      pesanEl.innerHTML = `Yah... Jawabannya adalah <b>${hasilBenar}</b>.`;
+      pesanEl.style.color = "#333";
+      akhiriSesi("Coba Lagi");
+    }
+
+    function akhiriSesi(teksTombol) {
+      startBtn.innerHTML = teksTombol;
+      startBtn.classList.remove("hidden");
+      gameArea.classList.add("hidden");
+    }
+
+    // Support tombol Enter
+    inputEl.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') cekJawaban();
     });
   </script>
 </body>
