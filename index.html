@@ -82,6 +82,12 @@
       font-weight: 600;
       min-height: 24px;
     }
+
+    #score, #highScore {
+      margin-top: 10px;
+      font-size: 1.1rem;
+      color: #555;
+    }
   </style>
 </head>
 <body>
@@ -101,26 +107,35 @@
     <button type="button" id="start" class="btn-primary" onclick="mulaiGame()">Mulai Main</button>
     
     <p id="pesan"></p>
+    <p id="score">Score: 0</p>
+    <p id="highScore">High Score: 0</p>
   </div>
 
   <script type="text/javascript">
     let angka1, angka2, hasilBenar;
+    let vScore = 0;
     
+    // Ambil High Score dari localStorage saat halaman pertama kali dibuka
+    let vHighScore = localStorage.getItem('highScore') || 0;
+    
+    const scoreEl = document.getElementById('score');
+    const highScoreEl = document.getElementById('highScore');
     const soalEl = document.getElementById('soal');
     const inputEl = document.getElementById('inputJawaban');
     const pesanEl = document.getElementById('pesan');
     const startBtn = document.getElementById('start');
     const gameArea = document.getElementById('game-area');
 
+    // Tampilkan High Score yang tersimpan di awal
+    highScoreEl.innerHTML = "High Score: " + vHighScore;
+
     function mulaiGame() {
-      // Setup Tampilan
       startBtn.classList.add("hidden");
       gameArea.classList.remove("hidden");
       pesanEl.innerHTML = "";
       inputEl.value = "";
       inputEl.focus();
 
-      // Logika Angka (Random 1-20 agar sedikit menantang)
       angka1 = Math.floor(Math.random() * 20) + 1;
       angka2 = Math.floor(Math.random() * 20) + 1;
       hasilBenar = angka1 + angka2;
@@ -138,6 +153,16 @@
       }
 
       if (Number(jawabanUser) === hasilBenar) {
+        vScore++; 
+        scoreEl.innerHTML = "Score: " + vScore;
+        
+        // Update High Score jika skor saat ini lebih tinggi
+        if (vScore > vHighScore) {
+          vHighScore = vScore;
+          localStorage.setItem('highScore', vHighScore);
+          highScoreEl.innerHTML = "High Score: " + vHighScore;
+        }
+
         pesanEl.innerHTML = "🎉 Mantap! Jawabanmu Benar.";
         pesanEl.style.color = "#2ed573";
         akhiriSesi("Main Lagi");
@@ -150,6 +175,9 @@
     }
 
     function menyerah() {
+      vScore = 0;
+      scoreEl.innerHTML = "Score: " + vScore;
+      
       pesanEl.innerHTML = `Yah... Jawabannya adalah <b>${hasilBenar}</b>.`;
       pesanEl.style.color = "#333";
       akhiriSesi("Coba Lagi");
@@ -161,7 +189,6 @@
       gameArea.classList.add("hidden");
     }
 
-    // Support tombol Enter
     inputEl.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') cekJawaban();
     });
