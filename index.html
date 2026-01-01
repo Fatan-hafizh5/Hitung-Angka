@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hitung Angka</title>
+  <style type="text/css">
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f2f5;
+    }
+    
+    .container {
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 300px;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    input {
+      text-align: center;
+      padding: 10px;
+      font-size: 1.2rem;
+      border-radius: 10px;
+      border: 2px solid #ddd;
+      width: 80%;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      border-color: crimson;
+    }
+    
+    button {
+      border: none;
+      background-color: crimson;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      padding: 12px 25px;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background-color: #a0102b;
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    #pesan {
+      font-weight: bold;
+      height: 20px; /* Jaga layout agar tidak goyang saat pesan muncul */
+    }
+
+    #soal {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="card">
+      <h1 id="soal">Siap?</h1>
+      <p id="instruksi">Klik tombol di bawah untuk mulai</p>
+      
+      <div id="game-area" class="hidden">
+        <input type="number" id="inputJawaban" placeholder="?" autocomplete="off"/>
+        <div style="margin-top: 20px;">
+          <button type="button" onclick="cekJawaban()" id="submit">Kirim Jawaban</button>
+        </div>
+      </div>
+
+      <button type="button" id="start" onclick="mulaiGame()">Mulai Game</button>
+      
+      <p id="pesan"></p>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    let angka1, angka2, hasilBenar;
+    
+    const soalEl = document.getElementById('soal');
+    const instruksiEl = document.getElementById('instruksi');
+    const inputEl = document.getElementById('inputJawaban');
+    const pesanEl = document.getElementById('pesan');
+    const startBtn = document.getElementById('start');
+    const gameArea = document.getElementById('game-area');
+
+    function mulaiGame() {
+      // Atur UI
+      startBtn.classList.add("hidden");
+      gameArea.classList.remove("hidden");
+      instruksiEl.innerHTML = "Berapa hasil penjumlahan ini?";
+      pesanEl.innerHTML = "";
+      inputEl.value = "";
+      inputEl.focus(); // Otomatis arahkan kursor ke input
+
+      // Logika Angka
+      angka1 = Math.floor(Math.random() * 10) + 1;
+      angka2 = Math.floor(Math.random() * 10) + 1;
+      hasilBenar = angka1 + angka2;
+
+      soalEl.innerHTML = `${angka1} + ${angka2}`;
+    }
+
+    function cekJawaban() {
+      const jawabanUser = inputEl.value;
+
+      // Validasi jika kosong
+      if (jawabanUser === "") {
+        pesanEl.innerHTML = "⚠️ Isi dulu ya!";
+        pesanEl.style.color = "orange";
+        return;
+      }
+
+      if (Number(jawabanUser) === hasilBenar) {
+        pesanEl.innerHTML = "✅ Benar! Kamu pintar.";
+        pesanEl.style.color = "green";
+        
+        // Ubah tombol untuk main lagi
+        startBtn.innerHTML = "Main Lagi";
+        startBtn.classList.remove("hidden");
+        gameArea.classList.add("hidden");
+      } else {
+        pesanEl.innerHTML = "❌ Salah, coba hitung lagi!";
+        pesanEl.style.color = "red";
+        inputEl.value = "";
+        inputEl.focus();
+      }
+    }
+
+    // Fitur tambahan: Tekan Enter untuk Submit
+    inputEl.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        cekJawaban();
+      }
+    });
+  </script>
+</body>
+</html>
